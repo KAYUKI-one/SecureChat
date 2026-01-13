@@ -57,3 +57,64 @@ v0.0.1 不安全，UI简陋，不能复制消息（反而更安全？）
 
 ## 声明
 本程序仅供学习Go语言后端和Wails前端，请勿用于非法用途！（而且，都非法了你干嘛用俺的程序？）
+
+
+
+English:
+
+## v0.0.1 Release Notes
+This is a relatively simple anonymous encrypted chat tool, providing both client and server components. The code was written by Google AI Studio, and I only performed auditing and modifications. The encryption method uses XChaCha20. The server cannot see the message content, but it can store it in the cloud. File upload and download are supported.
+## Usage Tutorial (Server)
+
+Download the file with "server_linux" in the release to your Linux server. You can use the following command:
+```
+curl -sSL https://raw.githubusercontent.com/KAYUKI-one/SecureChat/main/install.sh | sudo bash
+```
+Subsequently, you can choose how to hide the transmission characteristics. Here's a solution using Nginx static webpage disguise (the information itself is encrypted, but the transmission process will generate characteristics):
+```
+curl -sSL https://raw.githubusercontent.com/KAYUKI-one/SecureChat/main/setup_nginx.sh | sudo bash
+```
+The above one-click script can be used if you haven't installed Nginx or some proxy kernel yourself.
+If you have already installed Nginx, or are using a proxy kernel that occupies specific ports, you can consider:
+
+1. Log in to aaPanel and go to the **Website** page.
+2. Find a website you have already configured with **SSL (HTTPS)** (or create a new one and apply for a Let's Encrypt certificate).
+3. Ensure that the website can be accessed normally via https://your_domain.
+4. Click **Conf (Settings)** in the website list in aaPanel.
+5. Select **Config (Configuration File)** in the left menu. 6. Inside the `server { ... }` block, below `access_log`, insert the following code:
+```
+# Entry point: External users accessing this will only see 404 or be forwarded
+location /api/v2/updates {
+proxy_pass https://127.0.0.1:8080/ws; # Forward to Go backend
+
+# WebSocket core configuration
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "Upgrade";
+
+# Hide the real path, prevent detection
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+# If the Go backend uses a self-signed certificate, this must be enabled
+proxy_ssl_verify off;
+
+# Extend timeout to prevent chat disconnections
+proxy_read_timeout 3600s;
+proxy_send_timeout 3600s;
+}
+```
+For the above solution, your client's **Server Address** should be:
+https://your_domain/api/v2/updates
+
+## Client
+The client shouldn't need a tutorial, as it's very simple, but there are a few points to note:
+1. Server address: Please choose the server address to enter based on your server installation method.
+2. Username and password: Usernames are not unique, but the combination of username and password will generate a unique suffix after your username, so this is the only way to identify you. The cloud does not store any passwords.
+3. Regarding security: The current version does not have local encryption; it only implements cloud data encryption and transmission encryption. Some local database content is in plain text, so please consider this carefully.
+4. Regarding the key: The key determines the group you enter on the current server. Each key dynamically generates a salt value to encrypt your data. Therefore, different keys will show different data, thus achieving unlimited groups. Please keep your and your group members' keys safe. Notes (Disadvantages of each version, for personal use):
+v0.0.1: Insecure, rudimentary UI, unable to copy messages (which might actually make it safer?)
+
+## Disclaimer
+This program is for learning Go backend and Wails frontend development only. Please do not use it for illegal purposes! (Besides, if you're doing something illegal, why would you use my program?)

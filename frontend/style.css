@@ -1,0 +1,355 @@
+/* --- Telegram Pro v5 旗舰配色变量 --- */
+:root {
+    --bg-chat: #0e1621;         /* 聊天主背景 */
+    --bg-sidebar: #17212b;      /* 侧边栏背景 */
+    --bg-own: #2b5278;          /* 自己发送的气泡颜色 */
+    --bg-other: #182533;        /* 别人发送的气泡颜色 */
+    --bg-input: #17212b;        /* 输入框区域背景 */
+    --text-main: #ffffff;       /* 主文字颜色 */
+    --text-dim: #7f91a4;        /* 次要信息颜色 (时间、用户名) */
+    --accent: #2b82ca;          /* Telegram 经典蓝色 (按钮、进度条) */
+    --danger: #e53935;          /* 退出/擦除按钮颜色 */
+    --placeholder-blue: #5288c1; /* 头像占位符颜色 */
+}
+
+/* --- 基础设置 --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--bg-chat);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    user-select: none; /* 防止UI文字被误选 */
+}
+
+#app {
+    height: 100vh;
+    display: flex;
+}
+
+/* --- 1. 登录屏蔽层 --- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-chat);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    background: var(--bg-sidebar);
+    padding: 45px;
+    border-radius: 15px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+}
+
+.login-card h2 {
+    margin-bottom: 25px;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    background: var(--bg-chat);
+    border: 1px solid #242f3d;
+    color: white;
+    border-radius: 8px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--accent);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: opacity 0.2s;
+}
+
+.btn-login:hover { opacity: 0.9; }
+
+/* --- 2. 主界面布局 --- */
+.main-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* 侧边栏 */
+.sidebar {
+    width: 280px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid #080e15;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-box {
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom: 1px solid #080e15;
+}
+
+/* 侧边栏大头像 */
+.avatar-main {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: var(--placeholder-blue);
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+.avatar-main:hover { transform: scale(1.05); }
+
+.status-indicator {
+    font-size: 13px;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+/* --- 3. 聊天主区 --- */
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.top-header {
+    height: 56px;
+    background: var(--bg-sidebar);
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    border-bottom: 1px solid #080e15;
+    z-index: 10;
+}
+
+/* 进度条 (TG风格：顶部细线) */
+#progress-container {
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    display: none;
+    z-index: 99;
+}
+
+#prog-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s ease-out;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+/* --- 4. 消息流区域 --- */
+.message-pane {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* 紧凑排列 */
+}
+
+/* 消息包装容器：实现头像+气泡对齐 */
+.msg-wrapper {
+    display: flex;
+    align-items: flex-end; /* 头像与气泡底部对齐 */
+    gap: 12px;
+    margin-bottom: 6px;
+    width: 100%;
+}
+
+/* 自己发送：靠右，头像在右 */
+.msg-wrapper.own {
+    flex-direction: row-reverse;
+}
+
+/* 气泡旁的小头像/占位符 */
+.avatar-box {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--placeholder-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.img-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 气泡核心 */
+.bubble {
+    max-width: 65%;
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    position: relative;
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* 自己：深蓝色，右下角尖角 */
+.own .bubble {
+    background: var(--bg-own);
+    border-bottom-right-radius: 4px;
+}
+
+/* 别人：深灰色，左下角尖角 */
+.other .bubble {
+    background: var(--bg-other);
+    border-bottom-left-radius: 4px;
+}
+
+.msg-user {
+    font-size: 12px;
+    color: #3390ec;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.msg-time {
+    font-size: 11px;
+    color: var(--text-dim);
+    float: right;
+    margin: 8px -4px -4px 12px;
+    opacity: 0.7;
+}
+
+/* --- 5. 文件卡片样式 --- */
+.file-card {
+    background: rgba(0,0,0,0.15);
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.file-card button {
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* --- 6. 底部输入栏 --- */
+.input-bar {
+    padding: 15px 30px;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.input-bar input {
+    flex: 1;
+    background: var(--bg-chat);
+    border: none;
+    padding: 14px 20px;
+    color: white;
+    border-radius: 25px; /* 椭圆输入框 */
+    outline: none;
+    font-size: 15px;
+}
+
+.input-bar button {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: transform 0.2s;
+}
+.input-bar button:active { transform: scale(0.9); }
+
+/* --- 7. 侧边栏动作按钮 --- */
+.sidebar-actions {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 12px;
+    background: #242f3d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+.action-btn:hover { background: #2c394a; }
+
+.action-btn.danger {
+    margin-top: auto;
+    color: #ff4b4b;
+    background: #311b1b;
+}
+.action-btn.danger:hover { background: #421e1e; }
+
+/* 自定义滚动条 (符合深色主题) */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #242f3d; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }

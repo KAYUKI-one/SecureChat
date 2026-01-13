@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 确保引用了正确的 CSS 文件 -->
+    <link rel="stylesheet" href="./style.css">
+    <title>SecureChat Pro v5</title>
+</head>
+<body>
+    <div id="app">
+        <!-- 1. 登录遮罩层 (增加 Identity Password) -->
+        <div id="login-screen" class="overlay">
+            <div class="login-card">
+                <h2 style="color:var(--accent); margin-bottom:20px;">SECURE VAULT</h2>
+                <div class="input-group">
+                    <!-- 服务器地址 -->
+                    <input id="srv-addr" type="text" value="https://your-ip:8080" placeholder="Server Address">
+                    <!-- 用户显示名 -->
+                    <input id="user-id" type="text" placeholder="Identity (e.g. Rosemary)">
+                    <!-- 个人身份密码 (Tripcode) -->
+                    <input id="user-pass" type="password" placeholder="Identity Password (Tripcode)">
+                    <!-- 群组加密密钥 -->
+                    <input id="chat-key" type="password" placeholder="Group Secret Key">
+                </div>
+                <button onclick="ui.connect()" class="btn-login">ENTER CHANNEL</button>
+                <p style="font-size: 10px; color: var(--text-dim); margin-top: 15px;">
+                    Identity Password ensures no one can impersonate you.
+                </p>
+            </div>
+        </div>
+
+        <!-- 2. 主界面布局 -->
+        <div class="main-layout">
+            <!-- 左侧边栏 -->
+            <aside class="sidebar">
+                <div class="profile-box">
+                    <!-- 头像框：点击可更改头像 -->
+                    <div id="my-avatar" class="avatar-main" onclick="ui.changeAvatar()" title="Click to upload avatar">?</div>
+                    <h3 id="display-id">---</h3>
+                    <div id="net-status" class="status-indicator">Offline</div>
+                </div>
+                <div class="sidebar-actions">
+                    <button class="action-btn" onclick="ui.selectFile()">📎 Send Document</button>
+                    <div style="flex:1"></div>
+                    <!-- 退出并清空 ChatTemp -->
+                    <button class="action-btn danger" onclick="ui.wipe()">Logout & Wipe</button>
+                </div>
+            </aside>
+
+            <!-- 右侧聊天区 -->
+            <main class="chat-main">
+                <header class="top-header">
+                    <span>Encrypted Space</span>
+                    <!-- 传输百分比文字显示 -->
+                    <span id="prog-text" style="color:var(--accent); font-size:12px"></span>
+                </header>
+
+                <!-- 顶部进度条 (TG风格细线) -->
+                <div id="progress-container">
+                    <div id="prog-bar"></div>
+                </div>
+
+                <!-- 消息滚动容器 -->
+                <div id="message-list" class="message-pane"></div>
+
+                <!-- 底部输入栏 -->
+                <footer class="input-bar">
+                    <input id="msg-input" placeholder="Write a message..." autocomplete="off">
+                    <button onclick="ui.sendText()">SEND</button>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- 核心逻辑脚本 -->
+    <script src="./main.js"></script>
+</body>
+</html>
